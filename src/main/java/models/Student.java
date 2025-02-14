@@ -10,14 +10,14 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String email;
     private float averageMark;
 
     public Student() {}
 
-    public Student(Long id, String name, String email, float averageMark) {
-        this.id = id;
+    public Student(String name, String email, float averageMark) {
         this.name = name;
         this.email = email;
         this.averageMark = averageMark;

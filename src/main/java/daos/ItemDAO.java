@@ -1,19 +1,45 @@
 package daos;
 
-import models.Student;
-import utils.HibernateUtil;
+import models.Item;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import utils.HibernateUtil;
 
 import java.util.List;
 
-public class StudentDAO {
+public class ItemDAO {
 
-    public boolean saveStudent(Student student) {
+    public void saveItem(Item item) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.persist(student);
+            session.persist(item);
+            transaction.commit();
+        } catch (Exception e) {
+            System.err.println(e.getLocalizedMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        }
+    }
+
+    public Item getItemById(Long id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.get(Item.class, id);
+        }
+    }
+
+    public List<Item> getAllItems() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("from Item", Item.class).list();
+        }
+    }
+
+    public boolean  updateItem(Item item) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.merge(item);
             transaction.commit();
             return true;
         } catch (Exception e) {
@@ -24,23 +50,14 @@ public class StudentDAO {
         }
     }
 
-    public Student getStudentById(Long id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Student.class, id);
-        }
-    }
-
-    public List<Student> getAllStudents() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Student", Student.class).list();
-        }
-    }
-
-    public boolean  updateStudent(Student student) {
+    public boolean deleteItem(Long id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.merge(student);
+            Item item = getItemById(id);
+            if (item != null) {
+                session.remove(item);
+            }
             transaction.commit();
             return true;
         } catch (Exception e) {
@@ -51,21 +68,4 @@ public class StudentDAO {
         }
     }
 
-    public boolean deleteStudent(Long id) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            Student student = getStudentById(id);
-            if (student != null) {
-                session.remove(student);
-            }
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            return false;
-        }
-    }
 }

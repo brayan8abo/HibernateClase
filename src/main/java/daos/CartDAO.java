@@ -1,19 +1,46 @@
 package daos;
 
-import models.Student;
-import utils.HibernateUtil;
+import models.Cart;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import utils.HibernateUtil;
 
 import java.util.List;
 
-public class StudentDAO {
+public class CartDAO {
 
-    public boolean saveStudent(Student student) {
-        Transaction transaction = null;
+    Transaction transaction;
+
+    public void saveCart(Cart cart) {
+        transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.persist(student);
+            session.persist(cart);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        }
+    }
+
+    public Cart getCartById(Long id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.get(Cart.class, id);
+        }
+    }
+
+    public List<Cart> getAllCarts() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("from Cart", Cart.class).list();
+        }
+    }
+
+    public boolean  updateCart(Cart cart) {
+        transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.merge(cart);
             transaction.commit();
             return true;
         } catch (Exception e) {
@@ -24,40 +51,13 @@ public class StudentDAO {
         }
     }
 
-    public Student getStudentById(Long id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Student.class, id);
-        }
-    }
-
-    public List<Student> getAllStudents() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Student", Student.class).list();
-        }
-    }
-
-    public boolean  updateStudent(Student student) {
-        Transaction transaction = null;
+    public boolean deleteCart(Long id) {
+        transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.merge(student);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            return false;
-        }
-    }
-
-    public boolean deleteStudent(Long id) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            Student student = getStudentById(id);
-            if (student != null) {
-                session.remove(student);
+            Cart cart = getCartById(id);
+            if (cart != null) {
+                session.remove(cart);
             }
             transaction.commit();
             return true;

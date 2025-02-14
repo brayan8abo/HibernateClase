@@ -30,5 +30,9 @@
 
         <!-- Mapeo de entidades -->
         <mapping class="models.Student"/>
+        <mapping class="models.Address"/>
+        <mapping class="models.User"/>
+        <mapping class="models.Cart"/>
+        <mapping class="models.Item"/>
     </session-factory>
 </hibernate-configuration>
