@@ -13,9 +13,9 @@ import java.util.Set;
 
 public class HelloHibernateApp {
     public static void main(String[] args) {
-//withNoRelationsBetweenTables();
+withNoRelationsBetweenTables();
 //oneToOne();
-        oneToMany();
+//        oneToMany();
     }
 
     private static void withNoRelationsBetweenTables() {
@@ -91,15 +91,31 @@ public class HelloHibernateApp {
         Cart cart1 = new Cart();
         cart1.setName("Regalo de cumpleaños");
 
+        Cart cart2 = new Cart();
+        cart2.setName("Regalo de navidad");
+
         Item item = new Item();
         item.setName("Balón de baloncesto");
 
         Item item2 = new Item();
         item2.setName("Canasta");
 
+        Item item3 = new Item();
+        item3.setName("Juego de mesa");
+
+
+
         Set<Item> items = new HashSet<>();
         items.add(item);
         items.add(item2);
+
+        Set<Item> items2 = new HashSet<>();
+        items2.add(item3);
+
+        cart2.addItems(items);
+        cartDAO.saveCart(cart2);
+
+
 
         cart1.addItems(items);
 
